@@ -1,9 +1,10 @@
-from beanie import Document
+from typing import Annotated
+from beanie import Document, Indexed
 from pydantic import EmailStr
 
 
 class Admin(Document): 
-    email: EmailStr 
+    email: Annotated[EmailStr, Indexed(unique=True)]
     password: str
 
     class Settings: 

@@ -6,4 +6,8 @@ class AdminSignUp(BaseModel):
 
 class AdminSignUpResponse(BaseModel): 
     email: EmailStr 
-    id: str
+    id: str 
+
+class AdminLogin(BaseModel): 
+    username: EmailStr 
+    password: str
