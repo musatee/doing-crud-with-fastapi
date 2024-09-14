@@ -1,3 +1,4 @@
+from typing import Optional
 from pydantic import BaseModel, EmailStr 
 
 class AdminSignUp(BaseModel): 
@@ -10,4 +11,15 @@ class AdminSignUpResponse(BaseModel):
 
 class AdminLogin(BaseModel): 
     username: EmailStr 
-    password: str
+    password: str 
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str 
+
+class Products(BaseModel): 
+    name: str 
+    category: str
+    brand: Optional[str] = None
+    color: str 
+    quantity: int
