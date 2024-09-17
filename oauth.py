@@ -1,13 +1,16 @@
 import jwt 
-from fastapi import HTTPException, status
+from fastapi import Depends, HTTPException, status
 from jwt.exceptions import InvalidTokenError 
 from datetime import datetime, timedelta, timezone
 from passlib.context import CryptContext 
+from fastapi.security.oauth2 import OAuth2PasswordBearer
 
 
 SECRET_KEY = "7f2ed38d5ccf02f1302355c82fdf28a7766ce1d7725a6c63703fc5349dc0f217"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30 
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+
 
 def get_access_token(data):
     to_encode_payload = data.copy() 
@@ -23,7 +26,7 @@ def get_hashed_password(password: str):
 def verify_password(plain_password: str, hashed_password: str): 
     return pwd_context.verify(plain_password, hashed_password) 
 
-def get_user_id(token): 
+def get_user_id(token: str = Depends(oauth2_scheme)): 
     '''
     validate the token & return the user_id
     '''

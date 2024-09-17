@@ -1,23 +1,18 @@
-from ast import Set
 from typing import List, Optional
-from beanie import PydanticObjectId, UpdateResponse
-from bson import ObjectId
+from beanie import PydanticObjectId
 from fastapi import APIRouter, Depends, Response, status, HTTPException
-from fastapi.security.oauth2 import OAuth2PasswordRequestForm
 from motor.motor_asyncio import AsyncIOMotorClient
 from database.models import Product
 from pymongo.errors import DuplicateKeyError
-from oauth import get_user_id
+import oauth
 from schema import schemas
 from session import get_mongodb_client 
-from fastapi.security import OAuth2PasswordBearer
 
 router = APIRouter(prefix="/products", tags=["Product"]) 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 
 @router.get("/", response_model=List[schemas.Product], status_code=status.HTTP_200_OK)
-async def get_products(mongo_client: AsyncIOMotorClient = Depends(get_mongodb_client), limit: int = 5, skip: int = 0, user_id = Depends(get_user_id(oauth2_scheme))): 
+async def get_products(mongo_client: AsyncIOMotorClient = Depends(get_mongodb_client), limit: int = 5, skip: int = 0, user_id: str = Depends(oauth.get_user_id)): 
     try:
         pipeline = [
             {
