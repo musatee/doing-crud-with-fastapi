@@ -1,4 +1,5 @@
 import jwt 
+from fastapi import HTTPException, status
 from jwt.exceptions import InvalidTokenError 
 from datetime import datetime, timedelta, timezone
 from passlib.context import CryptContext 
@@ -20,6 +21,19 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 def get_hashed_password(password: str): 
     return pwd_context.hash(password) 
 def verify_password(plain_password: str, hashed_password: str): 
-    return pwd_context.verify(plain_password, hashed_password)
+    return pwd_context.verify(plain_password, hashed_password) 
 
+def get_user_id(token): 
+    '''
+    validate the token & return the user_id
+    '''
+    try: 
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        user_id = payload.get("id")
+        if not user_id: 
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not validate credentials", headers={"WWW-Authenticate": "Bearer"}) 
+        return user_id 
+    except InvalidTokenError: 
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not validate credentials", headers={"WWW-Authenticate": "Bearer"})  
+    
 

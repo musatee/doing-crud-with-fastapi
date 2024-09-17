@@ -7,14 +7,17 @@ from fastapi.security.oauth2 import OAuth2PasswordRequestForm
 from motor.motor_asyncio import AsyncIOMotorClient
 from database.models import Product
 from pymongo.errors import DuplicateKeyError
-from oauth import get_hashed_password, verify_password, get_access_token
+from oauth import get_user_id
 from schema import schemas
 from session import get_mongodb_client 
+from fastapi.security import OAuth2PasswordBearer
 
 router = APIRouter(prefix="/products", tags=["Product"]) 
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+
 
 @router.get("/", response_model=List[schemas.Product], status_code=status.HTTP_200_OK)
-async def get_products(mongo_client: AsyncIOMotorClient = Depends(get_mongodb_client), limit: int = 5, skip: int = 0): 
+async def get_products(mongo_client: AsyncIOMotorClient = Depends(get_mongodb_client), limit: int = 5, skip: int = 0, user_id = Depends(get_user_id(oauth2_scheme))): 
     try:
         pipeline = [
             {
@@ -53,7 +56,8 @@ async def get_products(mongo_client: AsyncIOMotorClient = Depends(get_mongodb_cl
         '''
         for product in products: 
             product["id"] = str(product["_id"])
-            del product["_id"]
+            del product["_id"] 
+        print(user_id)
         return products
     except Exception as error: 
         raise error
