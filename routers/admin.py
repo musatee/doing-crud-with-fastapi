@@ -7,9 +7,9 @@ from pymongo.errors import DuplicateKeyError
 from oauth import get_hashed_password, verify_password, get_access_token
 from schema import schemas
 from session import get_mongodb_client 
+from logger import logger
 
 router = APIRouter(prefix="/admin", tags=["Admin"])
-
 @router.post("/signup", response_model=schemas.AdminSignUpResponse, status_code=status.HTTP_201_CREATED)
 async def signup(data: schemas.AdminSignUp, mongo_client: AsyncIOMotorClient = Depends(get_mongodb_client)): 
     data = data.model_dump()

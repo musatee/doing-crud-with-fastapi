@@ -1,0 +1,22 @@
+2024-09-18 21:08 INFO Request with method POST made on path http://127.0.0.1:8000/admin/signup
+2024-09-18 21:08 INFO Response status 403
+2024-09-18 21:09 INFO Request with method POST made on path http://127.0.0.1:8000/admin/signup
+2024-09-18 21:09 INFO Response status 403
+2024-09-18 21:09 INFO Request with method POST made on path http://127.0.0.1:8000/admin/signup
+2024-09-18 21:09 INFO Response status 403
+2024-09-18 21:09 INFO Request with method POST made on path http://127.0.0.1:8000/admin/signup
+2024-09-18 21:09 INFO Response status 403
+2024-09-18 21:24 INFO POST on http://127.0.0.1:8000/admin/signup
+ payload: <bound method Request.body of <starlette.middleware.base._CachedRequest object at 0x7f6b64b19150>>
+2024-09-18 21:24 ERROR '_StreamingResponse' object has no attribute 'body'
+Traceback (most recent call last):
+  File "/home/musa/Desktop/ecom/main.py", line 16, in log_everything
+    logger.info(f"Response status {response.body}")
+                                   ^^^^^^^^^^^^^
+AttributeError: '_StreamingResponse' object has no attribute 'body'
+2024-09-18 21:26 INFO POST on http://127.0.0.1:8000/admin/signup
+ payload: <bound method Request.body of <starlette.middleware.base._CachedRequest object at 0x7f82138fec50>>
+2024-09-18 21:26 INFO Response status <starlette.middleware.base._StreamingResponse object at 0x7f8213c37c90>
+2024-09-18 21:27 INFO POST on http://127.0.0.1:8000/admin/signup
+ payload: <coroutine object Request.body at 0x7f3732b2e5e0>
+2024-09-18 21:27 INFO Response status <starlette.middleware.base._StreamingResponse object at 0x7f3732ba8e50>
