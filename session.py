@@ -4,7 +4,7 @@ from beanie import init_beanie
 from motor.motor_asyncio import AsyncIOMotorClient
 
 username = "admin"
-password = "admin@123"
+password = "pass@123"
 host = "127.0.0.1"
 port = "27017"
 encoded_username = urllib.parse.quote_plus(username) 
@@ -16,7 +16,5 @@ async def get_mongodb_client():
         client = AsyncIOMotorClient(connection_string) 
         await init_beanie(database=client.ecom, document_models=[models.Admin, models.Product])
         return client
-    except ValueError: 
-        raise 
-    except Exception as e: 
-        raise e
+    except Exception as error: 
+        raise error

@@ -52,7 +52,7 @@ async def get_products(mongo_client: AsyncIOMotorClient = Depends(get_mongodb_cl
         for product in products: 
             product["id"] = str(product["_id"])
             del product["_id"] 
-        print(user_id)
+        
         return products
     except Exception as error: 
         raise error
@@ -60,7 +60,7 @@ async def get_products(mongo_client: AsyncIOMotorClient = Depends(get_mongodb_cl
         mongo_client.close() 
 
 @router.get("/filter", response_model=List[schemas.ProductFilter], status_code=status.HTTP_200_OK)
-async def get_products(mongo_client: AsyncIOMotorClient = Depends(get_mongodb_client), category: Optional[str]= None, brand: Optional[str]= None, limit: int = 100, skip: int = 0): 
+async def get_products(mongo_client: AsyncIOMotorClient = Depends(get_mongodb_client), category: Optional[str]= None, brand: Optional[str]= None, limit: int = 100, skip: int = 0, user_id: str = Depends(oauth.get_user_id)): 
     try:
         '''
         catch category & brand name as query params if any 
@@ -120,7 +120,7 @@ async def get_products(mongo_client: AsyncIOMotorClient = Depends(get_mongodb_cl
         mongo_client.close() 
 
 @router.get("/{id}", response_model=List[schemas.Product], status_code=status.HTTP_200_OK)
-async def get_products(id: str, mongo_client: AsyncIOMotorClient = Depends(get_mongodb_client)): 
+async def get_products(id: str, mongo_client: AsyncIOMotorClient = Depends(get_mongodb_client), user_id: str = Depends(oauth.get_user_id)): 
     try:
         ''''
         aggregate is not supported for beanie find_one method. 
@@ -166,7 +166,7 @@ async def get_products(id: str, mongo_client: AsyncIOMotorClient = Depends(get_m
         mongo_client.close() 
 
 @router.post("/", response_model=schemas.ProductAddOut, status_code=status.HTTP_201_CREATED)
-async def login(data: schemas.ProductBase, mongo_client: AsyncIOMotorClient = Depends(get_mongodb_client)):
+async def login(data: schemas.ProductBase, mongo_client: AsyncIOMotorClient = Depends(get_mongodb_client), user_id: str = Depends(oauth.get_user_id)):
     try: 
         insert = Product(**data.model_dump())
         await insert.create()
@@ -177,7 +177,7 @@ async def login(data: schemas.ProductBase, mongo_client: AsyncIOMotorClient = De
         mongo_client.close() 
 
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
-async def login(id: str, mongo_client: AsyncIOMotorClient = Depends(get_mongodb_client)):
+async def login(id: str, mongo_client: AsyncIOMotorClient = Depends(get_mongodb_client), user_id: str = Depends(oauth.get_user_id)):
     try:  
         result = await Product.find_one(Product.id == PydanticObjectId(id))
         if not result: 
@@ -190,7 +190,7 @@ async def login(id: str, mongo_client: AsyncIOMotorClient = Depends(get_mongodb_
         mongo_client.close() 
 
 @router.put("/{id}", status_code=status.HTTP_201_CREATED)
-async def login(id: str, product: schemas.ProductUpdate, mongo_client: AsyncIOMotorClient = Depends(get_mongodb_client)):
+async def login(id: str, product: schemas.ProductUpdate, mongo_client: AsyncIOMotorClient = Depends(get_mongodb_client), user_id: str = Depends(oauth.get_user_id)):
     try: 
         result = await Product.find_one(Product.id == PydanticObjectId(id))
         if not result: 
