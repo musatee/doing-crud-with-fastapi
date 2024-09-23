@@ -1,22 +1,26 @@
-from fastapi import Depends, FastAPI, Request
-import asyncio
-from pydantic import EmailStr 
-from schema import schemas 
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import JSONResponse
 from routers import admin, product
-from logger import logger 
-import time
+from logger import logger
 
 app = FastAPI() 
 
-@app.middleware("http")
-async def log_everything(request: Request, call_next): 
-    try: 
-        logger.info(f"{request.method} {request.url}\n payload: {request.body()}")
-        response = await call_next(request)
-        logger.info(f"Response status {response}")
-        return response
-    except Exception as error:
-        logger.error(error, exc_info=True)
+@app.exception_handler(HTTPException) 
+async def exception_handler(request: Request, exc: HTTPException):
+    status_codes = ["401", "400", "403"]
+    if str(exc.status_code) in status_codes: 
+        logger.warning(f"{exc.detail} (status: {exc.status_code})")
+    else: 
+        logger.info(f"{exc.detail} (status: {exc.status_code})")
+    return JSONResponse(status_code=exc.status_code, content={"message": exc.detail}) 
+
+@app.exception_handler(Exception)
+async def generic_exception_handler(request: Request, exc: Exception):
+    logger.error(f"{exc}", exc_info=True)
+    return JSONResponse(
+        status_code=500,
+        content={"message": "An internal server error occurred"}
+    )
 
 app.include_router(admin.router)
 app.include_router(product.router)

@@ -1,22 +1,228 @@
-2024-09-18 21:08 INFO Request with method POST made on path http://127.0.0.1:8000/admin/signup
-2024-09-18 21:08 INFO Response status 403
-2024-09-18 21:09 INFO Request with method POST made on path http://127.0.0.1:8000/admin/signup
-2024-09-18 21:09 INFO Response status 403
-2024-09-18 21:09 INFO Request with method POST made on path http://127.0.0.1:8000/admin/signup
-2024-09-18 21:09 INFO Response status 403
-2024-09-18 21:09 INFO Request with method POST made on path http://127.0.0.1:8000/admin/signup
-2024-09-18 21:09 INFO Response status 403
-2024-09-18 21:24 INFO POST on http://127.0.0.1:8000/admin/signup
- payload: <bound method Request.body of <starlette.middleware.base._CachedRequest object at 0x7f6b64b19150>>
-2024-09-18 21:24 ERROR '_StreamingResponse' object has no attribute 'body'
+2024-09-23 21:40 INFO Could not validate credentials (status: 401)
+2024-09-23 21:42 INFO Could not validate credentials, please login (status: 401)
+2024-09-23 21:43 INFO GET /products/
+2024-09-23 21:43 INFO Could not validate credentials, please login (status: 401)
+2024-09-23 21:46 INFO POST /products/
+ {
+        "name": "Xiaomi Watch 3",
+        "category": {
+            "name": "smartwatch",
+            "description": "Xiaomi Watch 2 Smart Watch with 5ATM and GPS"
+        },
+        "brand": "Xiaomi",
+        "color": ["black", "blue"],
+        "quantity": 10,
+        "price": 10
+        
+    }
+2024-09-23 21:46 INFO Could not validate credentials, please login (status: 401)
+2024-09-23 21:46 INFO GET /products/66e7bd41aee6d9a7d044502f
+2024-09-23 21:46 INFO Could not validate credentials, please login (status: 401)
+2024-09-23 21:46 INFO DELETE /products/66e7bd41aee6d9a7d044502f
+2024-09-23 21:46 INFO Could not validate credentials, please login (status: 401)
+2024-09-23 21:46 INFO PUT /products/sfsdfsdfsd
+
+2024-09-23 21:46 INFO Could not validate credentials, please login (status: 401)
+2024-09-23 21:46 INFO GET /products/66e7bd41aee6d9a7d044502f
+2024-09-23 21:46 INFO Could not validate credentials, please login (status: 401)
+2024-09-23 21:48 INFO PUT /products/sfsdfsdfsd
+
+2024-09-23 21:48 INFO Could not validate credentials, please login (status: 401)
+2024-09-23 21:49 INFO GET /products/
+2024-09-23 21:49 INFO {"status": 200}
+2024-09-23 21:55 INFO GET /products/
+2024-09-23 21:55 INFO Request processed successfully (status: 200)
+2024-09-23 21:55 INFO GET /products/?limit=1
+2024-09-23 21:55 INFO Request processed successfully (status: 200)
+2024-09-23 21:55 INFO GET /products/?limit=0
+2024-09-23 21:55 INFO Operation not permitted (status: 400)
+2024-09-23 21:57 INFO GET /products/?limit=0
+2024-09-23 21:57 INFO Operation not permitted (status: 400)
+2024-09-23 22:01 INFO GET /products/?limit=0
+2024-09-23 22:01 INFO Operation not permitted (status: 400)
+2024-09-23 22:04 INFO GET /products/?limit=0
+2024-09-23 22:04 INFO Operation not permitted (status: 400)
+2024-09-23 22:05 INFO GET /products/?limit=0
+2024-09-23 22:05 WARNING Operation not permitted (status: 400)
+2024-09-23 22:05 INFO GET /products/?limit=-1
+2024-09-23 22:05 WARNING Operation not permitted (status: 400)
+2024-09-23 22:05 INFO GET /products/
+2024-09-23 22:05 INFO Request processed successfully (status: 200)
+2024-09-23 22:06 INFO GET /products/66e7bd41aee6d9a7d044502f
+2024-09-23 22:06 INFO No products are available (status: 404)
+2024-09-23 22:06 INFO GET /products/66e7bd41aee6d9a7d044502f
+2024-09-23 22:06 INFO No products are available (status: 404)
+2024-09-23 22:07 INFO GET /products/66eccda6bc0ae8d28d3989d8
+2024-09-23 22:07 INFO Request processed successfully (status: 200)
+2024-09-23 22:08 INFO DELETE /products/66e7bd41aee6d9a7d044502f
+2024-09-23 22:08 INFO Product ID: 66e7bd41aee6d9a7d044502f not found (status: 404)
+2024-09-23 22:08 INFO DELETE /products/66eccda6bc0ae8d28d3989d8
+2024-09-23 22:08 INFO Product deleted successfully (status: 204)
+2024-09-23 22:09 INFO GET /products/
+2024-09-23 22:09 INFO No products are available (status: 404)
+2024-09-23 22:09 INFO DELETE /products/66eccda6bc0ae8d28d3989d8
+2024-09-23 22:09 INFO Product ID: 66eccda6bc0ae8d28d3989d8 not found (status: 404)
+2024-09-23 22:09 INFO GET /products/66eccda6bc0ae8d28d3989d8
+2024-09-23 22:09 INFO No products are available (status: 404)
+2024-09-23 22:10 INFO GET /products/?filter=0
+2024-09-23 22:10 INFO No products are available (status: 404)
+2024-09-23 22:10 INFO GET /products/?limit=0
+2024-09-23 22:10 WARNING Operation not permitted (status: 400)
+2024-09-23 22:10 INFO GET /products/?skip=1
+2024-09-23 22:10 INFO No products are available (status: 404)
+2024-09-23 22:11 INFO POST /products/
+ {
+        "name": "Xiaomi Watch 3",
+        "category": {
+            "name": "smartwatch",
+            "description": "Xiaomi Watch 2 Smart Watch with 5ATM and GPS"
+        },
+        "brand": "Xiaomi",
+        "color": ["black", "blue"],
+        "quantity": 10,
+        "price": 10
+        
+    }
+2024-09-23 22:11 INFO Product added successfully (status: 201)
+2024-09-23 22:11 INFO GET /products/66f193223411975ea8fa8371
+2024-09-23 22:11 INFO Request processed successfully (status: 200)
+2024-09-23 22:12 INFO PUT /products/66f193223411975ea8fa8371
+ {
+        "name": "Xiaomi Watch 3",
+        "category": {
+            "name": "smartwatch",
+            "description": "Xiaomi Watch 2 Smart Watch with 5ATM and GPS"
+        },
+        "brand": "Xiaomi",
+        "color": ["black", "blue"],
+        "quantity": 0,
+        "price": 10
+        
+    }
+2024-09-23 22:12 INFO Product updated successfully (status: 201)
+2024-09-23 22:12 INFO GET /products/
+2024-09-23 22:12 INFO Request processed successfully (status: 200)
+2024-09-23 22:13 INFO GET /products/
+2024-09-23 22:13 ERROR division by zero
 Traceback (most recent call last):
-  File "/home/musa/Desktop/ecom/main.py", line 16, in log_everything
-    logger.info(f"Response status {response.body}")
-                                   ^^^^^^^^^^^^^
-AttributeError: '_StreamingResponse' object has no attribute 'body'
-2024-09-18 21:26 INFO POST on http://127.0.0.1:8000/admin/signup
- payload: <bound method Request.body of <starlette.middleware.base._CachedRequest object at 0x7f82138fec50>>
-2024-09-18 21:26 INFO Response status <starlette.middleware.base._StreamingResponse object at 0x7f8213c37c90>
-2024-09-18 21:27 INFO POST on http://127.0.0.1:8000/admin/signup
- payload: <coroutine object Request.body at 0x7f3732b2e5e0>
-2024-09-18 21:27 INFO Response status <starlette.middleware.base._StreamingResponse object at 0x7f3732ba8e50>
+  File "/home/musa/Desktop/ecom/ecom/lib/python3.11/site-packages/starlette/middleware/errors.py", line 165, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/musa/Desktop/ecom/ecom/lib/python3.11/site-packages/starlette/middleware/exceptions.py", line 62, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/musa/Desktop/ecom/ecom/lib/python3.11/site-packages/starlette/_exception_handler.py", line 62, in wrapped_app
+    raise exc
+  File "/home/musa/Desktop/ecom/ecom/lib/python3.11/site-packages/starlette/_exception_handler.py", line 51, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/musa/Desktop/ecom/ecom/lib/python3.11/site-packages/starlette/routing.py", line 715, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/musa/Desktop/ecom/ecom/lib/python3.11/site-packages/starlette/routing.py", line 735, in app
+    await route.handle(scope, receive, send)
+  File "/home/musa/Desktop/ecom/ecom/lib/python3.11/site-packages/starlette/routing.py", line 288, in handle
+    await self.app(scope, receive, send)
+  File "/home/musa/Desktop/ecom/ecom/lib/python3.11/site-packages/starlette/routing.py", line 76, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/musa/Desktop/ecom/ecom/lib/python3.11/site-packages/starlette/_exception_handler.py", line 62, in wrapped_app
+    raise exc
+  File "/home/musa/Desktop/ecom/ecom/lib/python3.11/site-packages/starlette/_exception_handler.py", line 51, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/musa/Desktop/ecom/ecom/lib/python3.11/site-packages/starlette/routing.py", line 73, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/home/musa/Desktop/ecom/ecom/lib/python3.11/site-packages/fastapi/routing.py", line 301, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/musa/Desktop/ecom/ecom/lib/python3.11/site-packages/fastapi/routing.py", line 212, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/musa/Desktop/ecom/routers/product.py", line 63, in get_products
+    raise error
+  File "/home/musa/Desktop/ecom/routers/product.py", line 58, in get_products
+    100/0
+    ~~~^~
+ZeroDivisionError: division by zero
+2024-09-23 22:14 INFO GET /products/
+2024-09-23 22:14 ERROR division by zero
+Traceback (most recent call last):
+  File "/home/musa/Desktop/ecom/ecom/lib/python3.11/site-packages/starlette/middleware/errors.py", line 165, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/musa/Desktop/ecom/ecom/lib/python3.11/site-packages/starlette/middleware/exceptions.py", line 62, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/musa/Desktop/ecom/ecom/lib/python3.11/site-packages/starlette/_exception_handler.py", line 62, in wrapped_app
+    raise exc
+  File "/home/musa/Desktop/ecom/ecom/lib/python3.11/site-packages/starlette/_exception_handler.py", line 51, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/musa/Desktop/ecom/ecom/lib/python3.11/site-packages/starlette/routing.py", line 715, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/musa/Desktop/ecom/ecom/lib/python3.11/site-packages/starlette/routing.py", line 735, in app
+    await route.handle(scope, receive, send)
+  File "/home/musa/Desktop/ecom/ecom/lib/python3.11/site-packages/starlette/routing.py", line 288, in handle
+    await self.app(scope, receive, send)
+  File "/home/musa/Desktop/ecom/ecom/lib/python3.11/site-packages/starlette/routing.py", line 76, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/musa/Desktop/ecom/ecom/lib/python3.11/site-packages/starlette/_exception_handler.py", line 62, in wrapped_app
+    raise exc
+  File "/home/musa/Desktop/ecom/ecom/lib/python3.11/site-packages/starlette/_exception_handler.py", line 51, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/musa/Desktop/ecom/ecom/lib/python3.11/site-packages/starlette/routing.py", line 73, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/home/musa/Desktop/ecom/ecom/lib/python3.11/site-packages/fastapi/routing.py", line 301, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/musa/Desktop/ecom/ecom/lib/python3.11/site-packages/fastapi/routing.py", line 212, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/musa/Desktop/ecom/routers/product.py", line 63, in get_products
+    raise error
+  File "/home/musa/Desktop/ecom/routers/product.py", line 58, in get_products
+    100/0
+    ~~~^~
+ZeroDivisionError: division by zero
+2024-09-23 22:15 INFO GET /products/
+2024-09-23 22:15 ERROR division by zero
+Traceback (most recent call last):
+  File "/home/musa/Desktop/ecom/ecom/lib/python3.11/site-packages/starlette/middleware/errors.py", line 165, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/musa/Desktop/ecom/ecom/lib/python3.11/site-packages/starlette/middleware/exceptions.py", line 62, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/musa/Desktop/ecom/ecom/lib/python3.11/site-packages/starlette/_exception_handler.py", line 62, in wrapped_app
+    raise exc
+  File "/home/musa/Desktop/ecom/ecom/lib/python3.11/site-packages/starlette/_exception_handler.py", line 51, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/musa/Desktop/ecom/ecom/lib/python3.11/site-packages/starlette/routing.py", line 715, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/musa/Desktop/ecom/ecom/lib/python3.11/site-packages/starlette/routing.py", line 735, in app
+    await route.handle(scope, receive, send)
+  File "/home/musa/Desktop/ecom/ecom/lib/python3.11/site-packages/starlette/routing.py", line 288, in handle
+    await self.app(scope, receive, send)
+  File "/home/musa/Desktop/ecom/ecom/lib/python3.11/site-packages/starlette/routing.py", line 76, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/musa/Desktop/ecom/ecom/lib/python3.11/site-packages/starlette/_exception_handler.py", line 62, in wrapped_app
+    raise exc
+  File "/home/musa/Desktop/ecom/ecom/lib/python3.11/site-packages/starlette/_exception_handler.py", line 51, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/musa/Desktop/ecom/ecom/lib/python3.11/site-packages/starlette/routing.py", line 73, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/home/musa/Desktop/ecom/ecom/lib/python3.11/site-packages/fastapi/routing.py", line 301, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/musa/Desktop/ecom/ecom/lib/python3.11/site-packages/fastapi/routing.py", line 212, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/musa/Desktop/ecom/routers/product.py", line 63, in get_products
+    raise error
+  File "/home/musa/Desktop/ecom/routers/product.py", line 58, in get_products
+    100/0
+    ~~~^~
+ZeroDivisionError: division by zero
+2024-09-23 22:24 INFO GET /products/
+2024-09-23 22:24 WARNING Could not validate credentials, please login (status: 401)
+2024-09-23 22:24 INFO POST /admin/login
+2024-09-23 22:24 INFO User logged in !! (status: 200)
+2024-09-23 22:25 INFO POST /admin/login
+2024-09-23 22:25 WARNING 401: Invalid Credentials (status: 401)
+2024-09-23 22:25 INFO POST /admin/login
+2024-09-23 22:25 INFO User logged in !! (status: 200)
+2024-09-23 22:26 INFO POST /admin/signup
+2024-09-23 22:26 INFO User created successfully (status: 201)

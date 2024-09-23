@@ -3,16 +3,16 @@ from beanie import PydanticObjectId
 from fastapi import APIRouter, Depends, Response, status, HTTPException
 from motor.motor_asyncio import AsyncIOMotorClient
 from database.models import Product
-from pymongo.errors import DuplicateKeyError
+from pymongo.errors import DuplicateKeyError, OperationFailure
 import oauth
+from logger import logger, request_with_payload, request_without_payload
 from schema import schemas
 from session import get_mongodb_client 
 
 router = APIRouter(prefix="/products", tags=["Product"]) 
 
-
 @router.get("/", response_model=List[schemas.Product], status_code=status.HTTP_200_OK)
-async def get_products(mongo_client: AsyncIOMotorClient = Depends(get_mongodb_client), limit: int = 5, skip: int = 0, user_id: str = Depends(oauth.get_user_id)): 
+async def get_products(mongo_client: AsyncIOMotorClient = Depends(get_mongodb_client), limit: int = 10, skip: int = 0, request = Depends(request_without_payload), user_id: str = Depends(oauth.get_user_id)): 
     try:
         pipeline = [
             {
@@ -41,7 +41,10 @@ async def get_products(mongo_client: AsyncIOMotorClient = Depends(get_mongodb_cl
             }
         ]
 
-        products = await Product.aggregate(pipeline).to_list()
+        try: 
+            products = await Product.aggregate(pipeline).to_list()
+        except OperationFailure as error: 
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Operation not permitted")
         if not products: 
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"No products are available")
         
@@ -51,16 +54,17 @@ async def get_products(mongo_client: AsyncIOMotorClient = Depends(get_mongodb_cl
         '''
         for product in products: 
             product["id"] = str(product["_id"])
-            del product["_id"] 
-        
+            del product["_id"]
+        logger.info('Request processed successfully (status: 200)')
         return products
+    
     except Exception as error: 
         raise error
     finally: 
         mongo_client.close() 
 
 @router.get("/filter", response_model=List[schemas.ProductFilter], status_code=status.HTTP_200_OK)
-async def get_products(mongo_client: AsyncIOMotorClient = Depends(get_mongodb_client), category: Optional[str]= None, brand: Optional[str]= None, limit: int = 100, skip: int = 0, user_id: str = Depends(oauth.get_user_id)): 
+async def get_products(mongo_client: AsyncIOMotorClient = Depends(get_mongodb_client), category: Optional[str]= None, brand: Optional[str]= None, limit: int = 10, skip: int = 0, request = Depends(request_without_payload), user_id: str = Depends(oauth.get_user_id)): 
     try:
         '''
         catch category & brand name as query params if any 
@@ -108,10 +112,13 @@ async def get_products(mongo_client: AsyncIOMotorClient = Depends(get_mongodb_cl
             }
         }
         pipeline.append(project)
-
-        products = await Product.aggregate(pipeline).to_list()
+        try: 
+            products = await Product.aggregate(pipeline).to_list()
+        except OperationFailure as error:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Operation not permitted")
         if not products: 
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="NO products are available")
+        logger.info('Request processed successfully (status: 200)')
         return products
     except Exception as error:
         raise error
@@ -120,14 +127,18 @@ async def get_products(mongo_client: AsyncIOMotorClient = Depends(get_mongodb_cl
         mongo_client.close() 
 
 @router.get("/{id}", response_model=List[schemas.Product], status_code=status.HTTP_200_OK)
-async def get_products(id: str, mongo_client: AsyncIOMotorClient = Depends(get_mongodb_client), user_id: str = Depends(oauth.get_user_id)): 
+async def get_products(id: str, mongo_client: AsyncIOMotorClient = Depends(get_mongodb_client), request = Depends(request_without_payload), user_id: str = Depends(oauth.get_user_id)): 
     try:
         ''''
         aggregate is not supported for beanie find_one method. 
         so , returning document using aggregate pipeline directly
         '''
+        try: 
+            id = PydanticObjectId(id)
+        except Exception as error: 
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"'{id}' is not a valid ID")
         pipeline = [
-            {"$match": {"_id": PydanticObjectId(id)}},
+            {"$match": {"_id": id}},
             {
                 "$project": {
                     "name": 1,
@@ -147,8 +158,10 @@ async def get_products(id: str, mongo_client: AsyncIOMotorClient = Depends(get_m
                 }
             }
         ]
-        
-        products = await Product.aggregate(pipeline).to_list()
+        try:
+            products = await Product.aggregate(pipeline).to_list()
+        except OperationFailure as error:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Operation not permitted")
         if not products: 
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"No products are available")
         
@@ -159,6 +172,7 @@ async def get_products(id: str, mongo_client: AsyncIOMotorClient = Depends(get_m
         for product in products: 
             product["id"] = str(product["_id"])
             del product["_id"]
+        logger.info('Request processed successfully (status: 200)')
         return products
     except Exception as error: 
         raise error
@@ -166,10 +180,11 @@ async def get_products(id: str, mongo_client: AsyncIOMotorClient = Depends(get_m
         mongo_client.close() 
 
 @router.post("/", response_model=schemas.ProductAddOut, status_code=status.HTTP_201_CREATED)
-async def login(data: schemas.ProductBase, mongo_client: AsyncIOMotorClient = Depends(get_mongodb_client), user_id: str = Depends(oauth.get_user_id)):
+async def login(data: schemas.ProductBase, mongo_client: AsyncIOMotorClient = Depends(get_mongodb_client), request = Depends(request_with_payload), user_id: str = Depends(oauth.get_user_id)):
     try: 
         insert = Product(**data.model_dump())
         await insert.create()
+        logger.info('Product added successfully (status: 201)')
         return schemas.ProductAddOut(name=insert.name, id=str(insert.id), quantity=insert.quantity)
     except DuplicateKeyError as error:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Datasets with duplicate name, brand & category are not allowed") 
@@ -177,12 +192,13 @@ async def login(data: schemas.ProductBase, mongo_client: AsyncIOMotorClient = De
         mongo_client.close() 
 
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
-async def login(id: str, mongo_client: AsyncIOMotorClient = Depends(get_mongodb_client), user_id: str = Depends(oauth.get_user_id)):
+async def login(id: str, mongo_client: AsyncIOMotorClient = Depends(get_mongodb_client), request = Depends(request_without_payload), user_id: str = Depends(oauth.get_user_id)):
     try:  
         result = await Product.find_one(Product.id == PydanticObjectId(id))
         if not result: 
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Product ID: {id} not found") 
         await result.delete() 
+        logger.info('Product deleted successfully (status: 204)')
         return Response(status_code=status.HTTP_204_NO_CONTENT)
     except Exception:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Product ID: {id} not found") 
@@ -190,13 +206,14 @@ async def login(id: str, mongo_client: AsyncIOMotorClient = Depends(get_mongodb_
         mongo_client.close() 
 
 @router.put("/{id}", status_code=status.HTTP_201_CREATED)
-async def login(id: str, product: schemas.ProductUpdate, mongo_client: AsyncIOMotorClient = Depends(get_mongodb_client), user_id: str = Depends(oauth.get_user_id)):
+async def login(id: str, product: schemas.ProductUpdate, mongo_client: AsyncIOMotorClient = Depends(get_mongodb_client), request = Depends(request_with_payload), user_id: str = Depends(oauth.get_user_id)):
     try: 
         result = await Product.find_one(Product.id == PydanticObjectId(id))
         if not result: 
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Product ID: {id} not found") 
         await result.update({"$set": product.model_dump()})
         updated_data = await Product.get(PydanticObjectId(id)) 
+        logger.info('Product updated successfully (status: 201)')
         return {"data": updated_data}
 
         

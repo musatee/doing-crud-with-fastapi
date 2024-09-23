@@ -4,7 +4,7 @@ from beanie import init_beanie
 from motor.motor_asyncio import AsyncIOMotorClient
 
 username = "admin"
-password = "pass@123"
+password = "admin@123"
 host = "127.0.0.1"
 port = "27017"
 encoded_username = urllib.parse.quote_plus(username) 
