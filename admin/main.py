@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
-from routers import admin, product
+from routers import admin
 from logger import logger
 
 app = FastAPI() 
@@ -23,4 +23,3 @@ async def generic_exception_handler(request: Request, exc: Exception):
     )
 
 app.include_router(admin.router)
-app.include_router(product.router)
