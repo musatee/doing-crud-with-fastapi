@@ -6,9 +6,21 @@ from pymongo.errors import DuplicateKeyError
 from oauth import get_hashed_password, verify_password, get_access_token
 from schema import schemas
 from session import get_mongodb_client 
-from logger import logger, request_without_payload
+from logger import logger, request_without_payload # will inject it as dependency so that every request is logged accordingly
 
 router = APIRouter(prefix="/admin", tags=["Admin"])
+
+@router.get("/healthz", status_code=status.HTTP_200_OK)
+async def check_liveness(mongo_client: AsyncIOMotorClient = Depends(get_mongodb_client), request = Depends(request_without_payload)):
+    try:
+        result = await mongo_client.admin.command("ping")
+        if result.get("ok") == 1: 
+            return {"status": "UP"}
+        else: 
+            raise HTTPException(status_code=status.HTTP_408_REQUEST_TIMEOUT, detail=f"mongodb is unreachable :( )") 
+    except Exception as error: 
+        raise error
+
 @router.post("/signup", response_model=schemas.AdminSignUpResponse, status_code=status.HTTP_201_CREATED)
 async def signup(data: schemas.AdminSignUp, mongo_client: AsyncIOMotorClient = Depends(get_mongodb_client), request = Depends(request_without_payload)): 
     data = data.model_dump()

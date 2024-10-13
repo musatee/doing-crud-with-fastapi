@@ -5,7 +5,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from database.models import Product
 from pymongo.errors import DuplicateKeyError, OperationFailure
 import oauth
-from logger import logger, request_with_payload, request_without_payload
+from logger import logger, request_with_payload, request_without_payload # # will inject it as dependency so that every request is logged accordingly
 from schema import schemas
 from session import get_mongodb_client 
 
@@ -125,6 +125,18 @@ async def get_products(mongo_client: AsyncIOMotorClient = Depends(get_mongodb_cl
 
     finally: 
         mongo_client.close() 
+
+@router.get("/healthz", status_code=status.HTTP_200_OK)
+async def check_liveness(mongo_client: AsyncIOMotorClient = Depends(get_mongodb_client), request = Depends(request_without_payload)):
+    try:
+        result = await mongo_client.admin.command("ping")
+        if result.get("ok") == 1: 
+            return {"status": "UP"}
+        else: 
+            raise HTTPException(status_code=status.HTTP_408_REQUEST_TIMEOUT, detail=f"mongodb is unreachable :( )") 
+    except Exception as error: 
+        raise error
+
 
 @router.get("/{id}", response_model=List[schemas.Product], status_code=status.HTTP_200_OK)
 async def get_products(id: str, mongo_client: AsyncIOMotorClient = Depends(get_mongodb_client), request = Depends(request_without_payload), user_id: str = Depends(oauth.get_user_id)): 

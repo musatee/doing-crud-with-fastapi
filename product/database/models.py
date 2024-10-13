@@ -5,14 +5,6 @@ from datetime import datetime
 
 from pymongo import IndexModel
 
-
-class Admin(Document): 
-    email: Annotated[EmailStr, Indexed(unique=True)]
-    password: str
-
-    class Settings: 
-        name = "admin"
-
 class Category(BaseModel):
     name: str
     description: str

@@ -1,9 +1,11 @@
-import logging 
+import logging
+import os 
 from fastapi import Request
 logger = logging.getLogger(name="ecom")
 logger.setLevel(logging.INFO)  # Set the logger level to INFO
+log_path = os.getenv("log_path")
 
-file_handler = logging.FileHandler(filename="/app/log/product.log", mode="a", encoding="utf-8")
+file_handler = logging.FileHandler(filename=f"{log_path}/product.log", mode="a", encoding="utf-8")
 
 formatter = logging.Formatter(
     "%(asctime)s %(levelname)s %(message)s",
