@@ -16,7 +16,7 @@ Every single Product API is protected & requires JWT token
 - **GET /products/{id}**: Fetch a specific product by its ID.
 - **DELETE /products/{id}**: Delete a specific product by its ID.
 - **PUT /products/{id}**: Update a specific product by its ID.
-- **POST /products**: Create new products.
+- **POST /products**: Create a new product.
 - **GET /products/healthz**: Health check endpoint that verifies MongoDB connectivity.
 
 ## Tech Stack
@@ -102,4 +102,4 @@ project/
    -e token_url="http://127.0.0.1:8080/admin/login" \
    -e log_path="/app/log" product
    ```
-   >NOTE: the mongodb container must be running in the same docker network with name "mongo"
+   >NOTE: the mongodb container must be running in the same docker network.
