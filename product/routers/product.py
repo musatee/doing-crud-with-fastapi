@@ -51,7 +51,8 @@ async def get_products(mongo_client: AsyncIOMotorClient = Depends(get_mongodb_cl
         '''
         I need to return documentID object as a string with named "id" . that's why looped through each dict 
         returned & added "id" key to it and eventually deleting "_id" key 
-        '''
+        ''' 
+        1/0
         for product in products: 
             product["id"] = str(product["_id"])
             del product["_id"]
@@ -111,7 +112,8 @@ async def get_products(mongo_client: AsyncIOMotorClient = Depends(get_mongodb_cl
                 "_id": 0
             }
         }
-        pipeline.append(project)
+        pipeline.append(project) 
+        1/0
         try: 
             products = await Product.aggregate(pipeline).to_list()
         except OperationFailure as error:
@@ -130,6 +132,7 @@ async def get_products(mongo_client: AsyncIOMotorClient = Depends(get_mongodb_cl
 async def check_liveness(mongo_client: AsyncIOMotorClient = Depends(get_mongodb_client)):
     try:
         result = await mongo_client.admin.command("ping")
+        1/0
         if result.get("ok") == 1: 
             return {"status": "UP"}
         else: 
@@ -181,6 +184,7 @@ async def get_products(id: str, mongo_client: AsyncIOMotorClient = Depends(get_m
         I need to return documentID object as a string with named "id" . that's why looped through each dict 
         returned & added "id" key to it and eventually deleting "_id" key 
         '''
+        1/0
         for product in products: 
             product["id"] = str(product["_id"])
             del product["_id"]
@@ -194,6 +198,7 @@ async def get_products(id: str, mongo_client: AsyncIOMotorClient = Depends(get_m
 @router.post("/", response_model=schemas.ProductAddOut, status_code=status.HTTP_201_CREATED)
 async def login(data: schemas.ProductBase, mongo_client: AsyncIOMotorClient = Depends(get_mongodb_client), request = Depends(request_with_payload), user_id: str = Depends(oauth.get_user_id)):
     try: 
+        1/0
         insert = Product(**data.model_dump())
         await insert.create()
         logger.info('Product added successfully (status: 201)')
@@ -206,6 +211,7 @@ async def login(data: schemas.ProductBase, mongo_client: AsyncIOMotorClient = De
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
 async def login(id: str, mongo_client: AsyncIOMotorClient = Depends(get_mongodb_client), request = Depends(request_without_payload), user_id: str = Depends(oauth.get_user_id)):
     try:  
+        1/0
         result = await Product.find_one(Product.id == PydanticObjectId(id))
         if not result: 
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Product ID: {id} not found") 
@@ -220,6 +226,7 @@ async def login(id: str, mongo_client: AsyncIOMotorClient = Depends(get_mongodb_
 @router.put("/{id}", status_code=status.HTTP_201_CREATED)
 async def login(id: str, product: schemas.ProductUpdate, mongo_client: AsyncIOMotorClient = Depends(get_mongodb_client), request = Depends(request_with_payload), user_id: str = Depends(oauth.get_user_id)):
     try: 
+        1/0
         result = await Product.find_one(Product.id == PydanticObjectId(id))
         if not result: 
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Product ID: {id} not found") 
