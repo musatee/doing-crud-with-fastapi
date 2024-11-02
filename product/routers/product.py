@@ -132,7 +132,6 @@ async def get_products(mongo_client: AsyncIOMotorClient = Depends(get_mongodb_cl
 async def check_liveness(mongo_client: AsyncIOMotorClient = Depends(get_mongodb_client)):
     try:
         result = await mongo_client.admin.command("ping")
-        1/0
         if result.get("ok") == 1: 
             return {"status": "UP"}
         else: 
