@@ -2,6 +2,7 @@ from typing import List, Optional
 from beanie import PydanticObjectId
 from fastapi import APIRouter, Depends, Response, status, HTTPException
 from motor.motor_asyncio import AsyncIOMotorClient
+from prometheus_client import generate_latest
 from database.models import Product
 from pymongo.errors import DuplicateKeyError, OperationFailure
 import oauth
@@ -127,6 +128,10 @@ async def get_products(mongo_client: AsyncIOMotorClient = Depends(get_mongodb_cl
 
     finally: 
         mongo_client.close() 
+
+@router.get("/metrics", status_code=status.HTTP_200_OK)
+async def expose_metrics(): 
+    return generate_latest()
 
 @router.get("/healthz", status_code=status.HTTP_200_OK)
 async def check_liveness(mongo_client: AsyncIOMotorClient = Depends(get_mongodb_client)):

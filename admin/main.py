@@ -2,8 +2,22 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
 from routers import admin
 from logger import logger
+from prometheus_client import Counter, Histogram
 
 app = FastAPI() 
+
+HTTP_REQUEST_TOTAL = Counter("http_requests_total", "Total number of HTTP requests made", ["endpoint", "method"])
+HTTP_REQUEST_DURATION = Histogram("http_requests_duration_seconds", "Total Processing time of a HTTP request", ["endpoint", "method"])
+
+@app.middleware("http")
+async def prometheus_metrics_generator(request: Request, call_next):
+    endpoint = request.url.path 
+    method = request.method 
+    HTTP_REQUEST_TOTAL.labels(endpoint=endpoint, method=method).inc()
+
+    with HTTP_REQUEST_DURATION.labels(endpoint=endpoint, method=method).time():
+        response = await call_next(request)
+    return response
 
 @app.exception_handler(HTTPException) 
 async def exception_handler(request: Request, exc: HTTPException):
