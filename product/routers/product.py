@@ -9,12 +9,14 @@ import oauth
 from logger import logger, request_with_payload, request_without_payload # # will inject it as dependency so that every request is logged accordingly
 from schema import schemas
 from session import get_mongodb_client 
+import time 
 
 router = APIRouter(prefix="/products", tags=["Product"]) 
 
 @router.get("/", response_model=List[schemas.Product], status_code=status.HTTP_200_OK)
 async def get_products(mongo_client: AsyncIOMotorClient = Depends(get_mongodb_client), limit: int = 10, skip: int = 0, request = Depends(request_without_payload), user_id: str = Depends(oauth.get_user_id)): 
     try:
+        time.sleep(3)
         pipeline = [
             {
                 "$skip": skip  # Apply skip first
@@ -57,6 +59,7 @@ async def get_products(mongo_client: AsyncIOMotorClient = Depends(get_mongodb_cl
             product["id"] = str(product["_id"])
             del product["_id"]
         logger.info('Request processed successfully (status: 200)')
+        1/0
         return products
     
     except Exception as error: 
@@ -133,6 +136,7 @@ async def expose_metrics():
 
 @router.get("/version", status_code=status.HTTP_200_OK)
 async def show_version(): 
+    time.sleep(3)
     return {"msg": "app version v1.0"}
 
 @router.get("/healthz", status_code=status.HTTP_200_OK)
@@ -150,6 +154,7 @@ async def check_liveness(mongo_client: AsyncIOMotorClient = Depends(get_mongodb_
 @router.get("/{id}", response_model=List[schemas.Product], status_code=status.HTTP_200_OK)
 async def get_products(id: str, mongo_client: AsyncIOMotorClient = Depends(get_mongodb_client), request = Depends(request_without_payload), user_id: str = Depends(oauth.get_user_id)): 
     try:
+        time.sleep(3)
         ''''
         aggregate is not supported for beanie find_one method. 
         so , returning document using aggregate pipeline directly
@@ -194,6 +199,7 @@ async def get_products(id: str, mongo_client: AsyncIOMotorClient = Depends(get_m
             product["id"] = str(product["_id"])
             del product["_id"]
         logger.info('Request processed successfully (status: 200)')
+        1/0
         return products
     except Exception as error: 
         raise error
