@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status, HTTPException
+from fastapi import APIRouter, Depends, Response, status, HTTPException
 from fastapi.security.oauth2 import OAuth2PasswordRequestForm
 from motor.motor_asyncio import AsyncIOMotorClient
 from prometheus_client import generate_latest
@@ -13,7 +13,7 @@ router = APIRouter(prefix="/admin", tags=["Admin"])
 
 @router.get("/metrics", status_code=status.HTTP_200_OK)
 async def expose_metrics(): 
-    return generate_latest()
+    return Response(content=generate_latest(), media_type="text/plain")
 
 @router.get("/healthz", status_code=status.HTTP_200_OK)
 async def check_liveness(mongo_client: AsyncIOMotorClient = Depends(get_mongodb_client)):
@@ -25,6 +25,10 @@ async def check_liveness(mongo_client: AsyncIOMotorClient = Depends(get_mongodb_
             raise HTTPException(status_code=status.HTTP_408_REQUEST_TIMEOUT, detail=f"mongodb is unreachable :( )") 
     except Exception as error: 
         raise error
+
+@router.get("/version", status_code=status.HTTP_200_OK)
+async def show_version(): 
+    return {"msg": "app version v1.0"}
 
 @router.post("/signup", response_model=schemas.AdminSignUpResponse, status_code=status.HTTP_201_CREATED)
 async def signup(data: schemas.AdminSignUp, mongo_client: AsyncIOMotorClient = Depends(get_mongodb_client), request = Depends(request_without_payload)): 

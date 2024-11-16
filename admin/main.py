@@ -3,21 +3,26 @@ from fastapi.responses import JSONResponse
 from routers import admin
 from logger import logger
 from prometheus_client import Counter, Histogram
+import os
 
 app = FastAPI() 
 
-HTTP_REQUEST_TOTAL = Counter("http_requests_total", "Total number of HTTP requests made", ["endpoint", "method"])
-HTTP_REQUEST_DURATION = Histogram("http_requests_duration_seconds", "Total Processing time of a HTTP request", ["endpoint", "method"])
+APP_VERSION = os.getenv("APP_VERSION", "default")
+HTTP_REQUEST_TOTAL = Counter("http_requests_total", "Total number of HTTP requests made", ["endpoint", "method", "app_version"])
+HTTP_REQUEST_DURATION = Histogram("http_requests_duration_seconds", "Total Processing time of a HTTP request", ["endpoint", "method", "app_version"])
+HTTP_REQUEST_STATUS_CODE_TOTAL = Counter("http_requests_status_code_total", "Total count of all http requests status code", ["endpoint", "method", "status", "app_version"])
 
 @app.middleware("http")
 async def prometheus_metrics_generator(request: Request, call_next):
     endpoint = request.url.path 
     method = request.method 
-    HTTP_REQUEST_TOTAL.labels(endpoint=endpoint, method=method).inc()
+    HTTP_REQUEST_TOTAL.labels(endpoint=endpoint, method=method, app_version=APP_VERSION).inc()
 
-    with HTTP_REQUEST_DURATION.labels(endpoint=endpoint, method=method).time():
+    with HTTP_REQUEST_DURATION.labels(endpoint=endpoint, method=method, app_version=APP_VERSION).time():
         response = await call_next(request)
-    return response
+
+    HTTP_REQUEST_STATUS_CODE_TOTAL.labels(endpoint=endpoint, method=method, status=response.status_code, app_version=APP_VERSION).inc()
+    return response 
 
 @app.exception_handler(HTTPException) 
 async def exception_handler(request: Request, exc: HTTPException):
