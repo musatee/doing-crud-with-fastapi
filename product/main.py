@@ -18,8 +18,18 @@ async def prometheus_metrics_generator(request: Request, call_next):
     method = request.method 
     HTTP_REQUEST_TOTAL.labels(endpoint=endpoint, method=method, app_version=APP_VERSION).inc()
 
-    with HTTP_REQUEST_DURATION.labels(endpoint=endpoint, method=method, app_version=APP_VERSION).time():
-        response = await call_next(request)
+    try:
+        with HTTP_REQUEST_DURATION.labels(endpoint=endpoint, method=method, app_version=APP_VERSION).time():
+            response = await call_next(request) 
+    except HTTPException as exc: 
+        HTTP_REQUEST_STATUS_CODE_TOTAL.labels(endpoint=endpoint, method=method, status=exc.status_code, app_version=APP_VERSION).inc()
+        return JSONResponse(status_code=exc.status_code, content={"message": exc.detail})
+    except Exception as exc: 
+        HTTP_REQUEST_STATUS_CODE_TOTAL.labels(endpoint=endpoint, method=method, status="500", app_version=APP_VERSION).inc()
+        return JSONResponse(
+            status_code=500,
+            content={"message": "An internal server error occurred"}
+        )
 
     HTTP_REQUEST_STATUS_CODE_TOTAL.labels(endpoint=endpoint, method=method, status=response.status_code, app_version=APP_VERSION).inc()
     return response 
@@ -34,14 +44,16 @@ async def exception_handler(request: Request, exc: HTTPException):
         logger.error(f"{exc}", exc_info=True)
     else: 
         logger.info(f"{exc.detail} (status: {exc.status_code})")
-    return JSONResponse(status_code=exc.status_code, content={"message": exc.detail}) 
+    #return JSONResponse(status_code=exc.status_code, content={"message": exc.detail}) 
+    raise
 
 @app.exception_handler(Exception)
 async def generic_exception_handler(request: Request, exc: Exception):
     logger.error(f"{exc}", exc_info=True)
-    return JSONResponse(
-        status_code=500,
-        content={"message": "An internal server error occurred"}
-    )
+    # return JSONResponse(
+    #     status_code=500,
+    #     content={"message": "An internal server error occurred"}
+    # )
+    raise
 
 app.include_router(product.router)
