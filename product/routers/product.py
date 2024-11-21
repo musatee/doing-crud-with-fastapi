@@ -2,12 +2,14 @@ from typing import List, Optional
 from beanie import PydanticObjectId
 from fastapi import APIRouter, Depends, Response, status, HTTPException
 from motor.motor_asyncio import AsyncIOMotorClient
+from prometheus_client import generate_latest
 from database.models import Product
 from pymongo.errors import DuplicateKeyError, OperationFailure
 import oauth
 from logger import logger, request_with_payload, request_without_payload # # will inject it as dependency so that every request is logged accordingly
 from schema import schemas
 from session import get_mongodb_client 
+import time, asyncio
 
 router = APIRouter(prefix="/products", tags=["Product"]) 
 
@@ -51,7 +53,7 @@ async def get_products(mongo_client: AsyncIOMotorClient = Depends(get_mongodb_cl
         '''
         I need to return documentID object as a string with named "id" . that's why looped through each dict 
         returned & added "id" key to it and eventually deleting "_id" key 
-        '''
+        ''' 
         for product in products: 
             product["id"] = str(product["_id"])
             del product["_id"]
@@ -111,7 +113,7 @@ async def get_products(mongo_client: AsyncIOMotorClient = Depends(get_mongodb_cl
                 "_id": 0
             }
         }
-        pipeline.append(project)
+        pipeline.append(project) 
         try: 
             products = await Product.aggregate(pipeline).to_list()
         except OperationFailure as error:
@@ -125,6 +127,14 @@ async def get_products(mongo_client: AsyncIOMotorClient = Depends(get_mongodb_cl
 
     finally: 
         mongo_client.close() 
+
+@router.get("/metrics", status_code=status.HTTP_200_OK)
+async def expose_metrics(): 
+    return Response(content=generate_latest(), media_type="text/plain")
+
+@router.get("/version", status_code=status.HTTP_200_OK)
+async def show_version(): 
+    return {"msg": "app version v2.0"}
 
 @router.get("/healthz", status_code=status.HTTP_200_OK)
 async def check_liveness(mongo_client: AsyncIOMotorClient = Depends(get_mongodb_client)):
@@ -193,7 +203,7 @@ async def get_products(id: str, mongo_client: AsyncIOMotorClient = Depends(get_m
 
 @router.post("/", response_model=schemas.ProductAddOut, status_code=status.HTTP_201_CREATED)
 async def login(data: schemas.ProductBase, mongo_client: AsyncIOMotorClient = Depends(get_mongodb_client), request = Depends(request_with_payload), user_id: str = Depends(oauth.get_user_id)):
-    try: 
+    try:
         insert = Product(**data.model_dump())
         await insert.create()
         logger.info('Product added successfully (status: 201)')
